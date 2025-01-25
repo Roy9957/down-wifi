@@ -1,0 +1,130 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WiFi Manager</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff; /* White background */
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background-color: #FF8300; /* Orange heading bar */
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    input {
+      width: 95%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #FF8300; /* Orange button */
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: darkorange; /* Darker shade on hover */
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    WiFi Manager
+  </div>
+  <div class="container">
+    <h2><i class="fas fa-wifi"></i> Connect to WiFi</h2>
+    <div class="form-group">
+      <label for="ssid"><i class="fas fa-user"></i> Enter SSID:</label>
+      <input type="text" id="ssid" placeholder="WiFi SSID">
+    </div>
+    <div class="form-group">
+      <label for="password"><i class="fas fa-lock"></i> Enter Password:</label>
+      <input type="password" id="password" placeholder="WiFi Password">
+    </div>
+    <button id="connect">Connect</button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import Firebase libraries
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCnuX2FG-_k72qYwbltvwg7YW1x-ynL65E",
+      authDomain: "chatc-394ba.firebaseapp.com",
+      databaseURL: "https://chatc-394ba-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "chatc-394ba",
+      storageBucket: "chatc-394ba.firebasestorage.app",
+      messagingSenderId: "525830824984",
+      appId: "1:525830824984:web:e8ab5f5f77e3db25b74f6d"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Handle Connect button click
+    const connectButton = document.getElementById("connect");
+    connectButton.addEventListener("click", () => {
+      const ssid = document.getElementById("ssid").value;
+      const password = document.getElementById("password").value;
+
+      if (ssid && password) {
+        // Save to Firebase
+        const wifiRef = ref(database, `wifiNetworks/${ssid}`); // Save by SSID
+        set(wifiRef, {
+          ssid: ssid,
+          password: password
+        }).then(() => {
+          alert("WiFi Connected!");
+          // Redirect to dash.html with SSID as a query parameter
+          window.location.href = `dash.html?ssid=${ssid}`;
+        }).catch((error) => {
+          console.error("Error saving", error);
+          alert("Failed to save WiFi details. Try again.");
+        });
+      
+      } else {
+        alert("Please fill in both SSID and Password.");
+      }
+    });
+  </script>
+</body>
+</html>
